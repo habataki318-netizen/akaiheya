@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>赤い部屋</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f8f8f8;color:#222;font-family:Arial,sans-serif}
+header{padding:20px;border-bottom:1px solid #ddd}
+h1{color:#d22;margin:0 0 15px}
+input{padding:13px;border:1px solid #bbb;border-radius:25px;width:100%;font-size:16px}
+main{padding:22px;max-width:650px}
+.result{margin:26px 0}
+.result h2{color:#1a0dab;font-size:20px;font-weight:normal}
+.result p{color:#555;line-height:1.7}
+#popup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:85%;max-width:340px;background:#fff;border:2px solid #b00018;box-shadow:0 0 35px #0008;padding:22px;text-align:center;z-index:2}
+#popup h2{color:#b00018;font-size:23px}
+button{padding:12px 20px;border:1px solid #aaa;border-radius:5px;background:white;font-size:16px}
+#red{display:none;position:fixed;inset:0;overflow:auto;background:#190003;color:white;text-align:center;padding:24px 14px;z-index:5}
+#red h1{font-size:42px;color:#ff253d}
+.room{height:200px;max-width:500px;margin:20px auto;background:radial-gradient(#b00020,#380006,#100002);border:7px solid #610014;box-shadow:inset 0 0 45px red}
+#names{max-width:400px;margin:20px auto;border:1px solid #a00;padding:15px;text-align:left}
+#names p{padding:7px;border-bottom:1px solid #64101b}
+#red input{max-width:280px;background:#260006;color:white;border:1px solid #b22}
+#red button{margin:8px}
+</style>
+</head>
+<body>
+<header>
+<h1>Red Search</h1>
+<input id="q" value="赤い部屋" aria-label="検索">
+</header>
+<main id="results">
+<p>約 13,700 件の検索結果</p>
+<div class="result"><h2>赤い部屋の都市伝説</h2><p>消しても消しても現れる、謎の広告について。</p></div>
+<div class="result"><h2>削除された掲示板の記録</h2><p>最後の投稿には、ひとつの質問が残されていた。</p></div>
+<div class="result"><h2>このページを開かないでください</h2><p>もし赤いウィンドウが現れたら……。</p></div>
+</main>
+<div id="popup">
+<p>不明な広告</p>
+<h2 id="question">あなたは好きですか？</h2>
+<button id="close">× 閉じる</button>
+</div>
+<div id="red">
+<h1>赤い部屋</h1>
+<p>あなたは 赤い部屋 が好きですか？</p>
+<div class="room"></div>
+<p>記録された人々</p>
+<div id="names"></div>
+<p>あなたの名前を入力してください</p>
+<input id="player" maxlength="30" placeholder="名前（任意）">
+<br><button id="add">記録を確認</button>
+<p id="message"></p>
+<button id="restart">最初から</button>
+</div>
+<script>
+let n=0;
+const popup=document.getElementById('popup');
+const question=document.getElementById('question');
+const names=['佐藤ユウ','山田ミナ','田中ケイ','？？？'];
+function render(){
+ document.getElementById('names').replaceChildren();
+ names.forEach((x,i)=>{
+  let p=document.createElement('p');
+  p.textContent=(i+1)+'　'+x;
+  document.getElementById('names').appendChild(p);
+ });
+}
+function show(){
+ popup.style.display='block';
+ question.textContent=n<3?'あなたは好きですか？':'あなたは 赤い部屋 が好きですか？';
+}
+function closePopup(){
+ n++;
+ if(n>=6){
+  popup.style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('red').style.display='block';
+  document.body.style.background='#190003';
+  render();
+ }else{
+  popup.style.display='none';
+  setTimeout(show,350);
+ }
+}
+document.getElementById('close').onclick=closePopup;
+document.getElementById('q').addEventListener('change',()=>{
+ n=Math.max(n,1);
+ show();
+});
+document.getElementById('add').onclick=()=>{
+ let name=document.getElementById('player').value.trim();
+ if(!name){document.getElementById('message').textContent='名前を入力してね。';return;}
+ if(!names.includes(name))names.push(name);
+ render();
+ document.getElementById('message').textContent='記録されました……。';
+};
+document.getElementById('restart').onclick=()=>{
+ n=0;
+ document.getElementById('red').style.display='none';
+ document.getElementById('results').style.display='block';
+ document.body.style.background='#f8f8f8';
+ document.getElementById('player').value='';
+ document.getElementById('message').textContent='';
+ show();
+};
+setTimeout(show,2500);
+</script>
+</body>
+</html>
+
